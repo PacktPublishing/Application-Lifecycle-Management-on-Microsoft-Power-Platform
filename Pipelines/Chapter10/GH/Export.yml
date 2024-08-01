@@ -1,0 +1,67 @@
+name: Export From DEV
+on:
+  workflow_dispatch:
+
+jobs:
+  Export:
+    runs-on: windows-latest
+
+    environment: DEV
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Publish Solution
+        uses: microsoft/powerplatform-actions/publish-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: DemoSolution
+        
+      - name: Export Solution - Unmanaged
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: DemoSolution
+          solution-output-file: "${{runner.temp}}/exported/DemoSolution.zip"
+          managed: false
+          run-asynchronously: true
+          overwrite: true
+
+      - name: Export Solution - Managed
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: DemoSolution
+          solution-output-file: "${{runner.temp}}/exported/DemoSolution_managed.zip"
+          managed: false
+          run-asynchronously: true
+          overwrite: true
+          
+      - name: Unpack Solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: '${{runner.temp}}/exported/DemoSolution.zip'
+          solution-folder: 'PowerPlatform/Solutions/DemoSolution'
+          solution-type: 'Both'
+          overwrite-files: true
+
+      - name: Commit Changes to Repo
+        run: |
+          git config user.email "<>"
+          git config user.name "${{github.triggering_actor}}"
+          git add 'PowerPlatform/Solutions/DemoSolution' --all
+          git commit -m "DemoSolution Changes"
+          git pull origin main
+          git push origin main

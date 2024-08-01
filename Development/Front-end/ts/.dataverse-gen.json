@@ -1,0 +1,13 @@
+{
+  "entities": [
+    "account",
+    "contact",
+    "environmentvariabledefinition",
+    "environmentvariablevalue"
+  ],
+  "actions": [],
+  "functions": [],
+  "output": {
+    "outputRoot": "./src/dataverse-gen"
+  }
+}

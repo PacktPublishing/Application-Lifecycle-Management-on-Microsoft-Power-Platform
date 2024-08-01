@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  workflow_run:
+      workflows: ['Build Solution']
+      types: [completed]
+      branches:
+          - 'main'
+
+jobs:
+  ReleaseToTest:
+    name: Release to Test
+
+   runs-on: windows-latest
+
+    environment: Test
+
+    steps:      
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: '${{runner.temp}}/artifacts'
+          name: 'drop'
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Import Solution
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-file: '${{runner.temp}}/artifacts/DemoSolution_managed.zip'
+          activate-plugins: true
+          run-asynchronously: true
+          import-as-holding: true
+
+      - name: Upgrade Solution
+        uses: microsoft/powerplatform-actions/upgradde-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: 'DemoSolution'

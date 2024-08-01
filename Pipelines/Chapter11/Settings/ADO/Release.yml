@@ -1,0 +1,50 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+pr: none
+
+resources:
+  pipelines: 
+    - pipeline: buildPipeline
+      source: 'Build Solution'
+      trigger: none
+
+stages:
+- stage: DeployTest
+  displayName: 'Deploy to Test'
+  jobs:
+  - job: deployTest
+    pool: 
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+      clean: true
+      submodules: false
+      displayName: "Checkout repo"
+    - download: buildPipeline   # pipeline resource identifier.
+      artifact: drop
+    - task: CmdLine@2
+      inputs:
+        script: 'tree $(Pipeline.Workspace) /f'
+    - task: PowerPlatformToolInstaller@2
+      displayName: 'Power Platform Tool Installer'
+    - task: PowerPlatformImportSolution@2
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: 'Test'
+        SolutionInputFile: '$(Pipeline.Workspace)/buildPipeline/drop/DemoSolution_managed.zip'
+        UseDeploymentSettingsFile: true
+        DeploymentSettingsFile: '$(Agent.BuildDirectory)/s/PowerPlatform/Solutions/Settings/DemoSolution-Test.json'
+        AsyncOperation: true
+        MaxAsyncWaitTime: '60'
+        HoldingSolution: true
+    - task: PowerPlatformApplySolutionUpgrade@2
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: 'Test'
+        SolutionName: 'DemoSolution'
+        AsyncOperation: true
+        MaxAsyncWaitTime: '60'

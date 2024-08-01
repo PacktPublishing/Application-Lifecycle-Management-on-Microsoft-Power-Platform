@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>53161ddc-2fac-43d2-b929-2df687d160f2</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>EarlyBound</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)EarlyBoundGeneratorSettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CrmServiceContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dataverse\OptionSets\msft_DataState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dataverse\Tables\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EntityOptionSetEnum.cs" />
+  </ItemGroup>
+</Project>

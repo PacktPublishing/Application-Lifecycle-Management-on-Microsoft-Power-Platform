@@ -1,0 +1,34 @@
+trigger: none
+pr: none
+
+resources:
+  pipelines: 
+    - pipeline: buildPipeline
+      source: 'Build Solution'
+      trigger: none
+
+stages:
+- stage: DeployTest
+  displayName: 'Deploy to Test'
+  jobs:
+  - job: deployTest
+    pool: 
+      vmImage: 'windows-latest'
+    steps:
+    - task: PowerPlatformToolInstaller@2
+      displayName: 'Power Platform Tool Installer'
+    - task: PowerPlatformImportSolution@2
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: 'Test'
+        SolutionInputFile: '$(Pipeline.Workspace)\buildPipeline\drop\<Solution Schemaname>_managed.zip'
+        AsyncOperation: true
+        MaxAsyncWaitTime: '60'
+        HoldingSolution: true
+    - task: PowerPlatformApplySolutionUpgrade@2
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: 'Test'
+        SolutionName: 'DemoSolution'
+        AsyncOperation: true
+        MaxAsyncWaitTime: '60'

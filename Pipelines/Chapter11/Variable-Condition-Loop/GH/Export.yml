@@ -1,0 +1,88 @@
+name: Export From DEV
+
+on:
+  workflow_dispatch:
+    inputs:
+      publishCustomizations:
+        type: boolean
+        description: Publish Customizations
+
+env:
+  SOLUTION_NAME: '["DemoSolution", "SecondDemoSolution"]'
+
+jobs:
+  variables:
+    name: Compute outputs
+    runs-on: windows-latest
+    outputs:
+      solutions: ${{ env.SOLUTION_NAME }}
+    steps:
+      - name: Echo
+        if: false
+        run: echo
+  Export:
+    runs-on: windows-latest
+    environment: DEV
+    needs: variables
+    strategy:
+      matrix: 
+        solution: ${{fromJson(needs.variables.outputs.solutions)}}
+      max-parallel: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+      
+      - name: Publish Solution
+        if: ${{ inputs.publishCustomizations == 'true' }}
+        uses: microsoft/powerplatform-actions/publish-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+        
+      - name: Export Solution - Unmanaged
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: ${{ matrix.solution }}
+          solution-output-file: "${{runner.temp}}/exported/${{ matrix.solution }}.zip"
+          managed: false
+          run-asynchronously: true
+          overwrite: true
+
+      - name: Export Solution - Managed
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ vars.URL }}
+          app-id: ${{ vars.CLIENTID }}
+          client-secret: ${{ secrets.CLIENTSECRET }}
+          tenant-id: ${{ vars.TENANTID }}
+          solution-name: ${{ matrix.solution }}
+          solution-output-file: "${{runner.temp}}/exported/${{ matrix.solution }}_managed.zip"
+          managed: false
+          run-asynchronously: true
+          overwrite: true
+          
+      - name: Unpack Solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: '${{runner.temp}}/exported/${{ matrix.solution }}.zip'
+          solution-folder: 'PowerPlatform/Solutions/${{ matrix.solution }}'
+          solution-type: 'Both'
+          overwrite-files: true
+          
+      - name: Commit Changes to Repo
+        run: |
+          git config user.email "<>"
+          git config user.name "${{github.triggering_actor}}"
+          git add 'PowerPlatform/Solutions/${{ matrix.solution }}' --all
+          git commit -m "${{ matrix.solution }} Changes"
+          git pull origin main
+          git push origin main

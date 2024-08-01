@@ -1,0 +1,53 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: PowerPlatformToolInstaller@2
+  displayName: 'Power Platform Tool Installer '
+- task: PowerPlatformPublishCustomizations@2
+  displayName: Publish Customizations
+  inputs:
+    authenticationType: 'PowerPlatformSPN'
+    PowerPlatformSPN: 'DEV'
+    AsyncOperation: true
+    MaxAsyncWaitTime: '60'
+- task: PowerPlatformExportSolution@2
+  displayName: Export Solution - Unmanaged
+  inputs:
+    authenticationType: 'PowerPlatformSPN'
+    PowerPlatformSPN: 'DEV'
+    SolutionName: 'DemoSolution'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution.zip'
+    AsyncOperation: true
+    MaxAsyncWaitTime: '60'
+- task: PowerPlatformExportSolution@2
+  displayName: Export Solution - Managed
+  inputs:
+    authenticationType: 'PowerPlatformSPN'
+    PowerPlatformSPN: 'DEV'
+    SolutionName: 'DemoSolution'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution_managed.zip'
+    Managed: true
+    AsyncOperation: true
+    MaxAsyncWaitTime: '60'
+- task: PowerPlatformUnpackSolution@2
+  displayName: Unpack unmanaged Solution
+  inputs:
+    SolutionInputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution.zip'
+    SolutionTargetFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\DemoSolution'
+    SolutionType: 'Both'
+- task: CmdLine@2
+  displayName: Commit to Repo
+  inputs:
+    script: |
+      git config user.email $(Build.RequestedForEmail) 
+      git config user.name "$(Build.RequestedFor)"
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" fetch
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" checkout main
+      git add --all
+      git commit -m "$(Build.DefinitionName) $(Build.BuildNumber)"
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" pull origin main
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin main

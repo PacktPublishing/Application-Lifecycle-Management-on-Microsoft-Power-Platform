@@ -1,0 +1,20 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: PowerPlatformToolInstaller@2
+  displayName: 'Power Platform Tool Installer '
+- task: PowerPlatformPackSolution@2
+  inputs:
+    SolutionSourceFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\DemoSolution'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution_managed.zip'
+    SolutionType: 'Managed'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'drop'
+    publishLocation: 'pipeline'

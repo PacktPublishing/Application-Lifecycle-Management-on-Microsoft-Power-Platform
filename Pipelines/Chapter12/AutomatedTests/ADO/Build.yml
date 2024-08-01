@@ -1,0 +1,45 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: NuGetToolInstaller@1
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
+    vstsFeed: '6283727e-a3fa-4c12-a674-f8f805edc937'
+- task: MSBuild@1
+  inputs:
+    solution: '**/*.sln'
+- task: VisualStudioTestPlatformInstaller@1
+  inputs:
+    packageFeedSelector: 'nugetOrg'
+    versionSelector: 'latestPreRelease'
+- task: VSTest@3
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+
+- task: PowerPlatformToolInstaller@2
+  displayName: 'Power Platform Tool Installer '
+
+- task: PowerPlatformPackSolution@2
+  inputs:
+    SolutionSourceFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\DemoSolution'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution_managed.zip'
+    SolutionType: 'Managed'
+    #MapFile: '$(build.sourcesdirectory)\PowerPlatform\Solutions\Mappings\DemoSolution.xml'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'drop'
+    publishLocation: 'pipeline'

@@ -1,0 +1,68 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+- name: SolutionName
+  value: "DemoSolution,SecondDemoSolution"
+
+parameters:
+  - name: publishCustomization
+    displayName: Publish Customizations
+    default: False
+    type: boolean
+    values:
+      - False
+      - True
+
+steps:
+- task: PowerPlatformToolInstaller@2
+  displayName: 'Power Platform Tool Installer '
+- task: PowerPlatformPublishCustomizations@2
+  condition: eq(${{parameters.publishCustomization }}, 'true')
+  displayName: Publish Customizations
+  inputs:
+    authenticationType: 'PowerPlatformSPN'
+    PowerPlatformSPN: 'DEV'
+    AsyncOperation: true
+    MaxAsyncWaitTime: '60'
+- ${{ each solution in split(variables.solutionName, ',')}}:
+  - task: PowerPlatformExportSolution@2
+    displayName: Export ${{ solution }} - Unmanaged
+    inputs:
+      authenticationType: 'PowerPlatformSPN'
+      PowerPlatformSPN: 'DEV'
+      SolutionName: ${{ solution }}
+      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\${{ solution }}.zip'
+      AsyncOperation: true
+      MaxAsyncWaitTime: '60'
+  - task: PowerPlatformExportSolution@2
+    displayName: Export ${{ solution }} - Managed
+    inputs:
+      authenticationType: 'PowerPlatformSPN'
+      PowerPlatformSPN: 'DEV'
+      SolutionName: ${{ solution }}
+      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\${{ solution }}_managed.zip'
+      Managed: true
+      AsyncOperation: true
+      MaxAsyncWaitTime: '60'
+  - task: PowerPlatformUnpackSolution@2
+    displayName: Unpack unmanaged ${{ solution }}
+    inputs:
+      SolutionInputFile: '$(Build.ArtifactStagingDirectory)\\${{ solution }}.zip'
+      SolutionTargetFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\${{ solution }}'
+      SolutionType: 'Both'
+- task: CmdLine@2
+  displayName: Commit to Repo
+  inputs:
+    script: |
+      git config user.email $(Build.RequestedForEmail) 
+      git config user.name "$(Build.RequestedFor)"
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" fetch
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" checkout main
+      git add --all
+      git commit -m "$(Build.DefinitionName) $(Build.BuildNumber)"
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" pull origin main
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin main

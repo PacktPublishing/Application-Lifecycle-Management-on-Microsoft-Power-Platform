@@ -1,0 +1,9 @@
+{
+    "eslint.workingDirectories": [
+        "ts"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "workbench.tree.indent": 20
+}

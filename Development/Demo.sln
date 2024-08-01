@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{263BB38A-54AF-4684-8EF8-FF06B807FF9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AF6873AA-2846-4CF9-947D-0FF4575084CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Back-end", "Back-end", "{4561EB87-20BD-4970-9B84-7CDE21A151A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{A4718FFC-BFD3-4D5F-AB7E-19F75335F8A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Account", "Back-end\Plugins\Account\Account.csproj", "{EADEE1D4-3703-412B-8F31-433ED7376AAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Account.UnitTests", "Back-end\Plugins\AccountUnitTests\Account.UnitTests.csproj", "{929F59D3-59A6-40B9-AA72-FBAA6751C51B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{F85BC89A-2A8D-4D60-B502-37C5563F2D1A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "EarlyBound", "Back-end\Shared\EarlyBound\EarlyBound.shproj", "{53161DDC-2FAC-43D2-B929-2DF687D160F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EADEE1D4-3703-412B-8F31-433ED7376AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EADEE1D4-3703-412B-8F31-433ED7376AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EADEE1D4-3703-412B-8F31-433ED7376AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EADEE1D4-3703-412B-8F31-433ED7376AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{929F59D3-59A6-40B9-AA72-FBAA6751C51B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{929F59D3-59A6-40B9-AA72-FBAA6751C51B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{929F59D3-59A6-40B9-AA72-FBAA6751C51B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{929F59D3-59A6-40B9-AA72-FBAA6751C51B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{263BB38A-54AF-4684-8EF8-FF06B807FF9D} = {4561EB87-20BD-4970-9B84-7CDE21A151A9}
+		{AF6873AA-2846-4CF9-947D-0FF4575084CF} = {263BB38A-54AF-4684-8EF8-FF06B807FF9D}
+		{A4718FFC-BFD3-4D5F-AB7E-19F75335F8A4} = {AF6873AA-2846-4CF9-947D-0FF4575084CF}
+		{EADEE1D4-3703-412B-8F31-433ED7376AAE} = {263BB38A-54AF-4684-8EF8-FF06B807FF9D}
+		{929F59D3-59A6-40B9-AA72-FBAA6751C51B} = {A4718FFC-BFD3-4D5F-AB7E-19F75335F8A4}
+		{F85BC89A-2A8D-4D60-B502-37C5563F2D1A} = {4561EB87-20BD-4970-9B84-7CDE21A151A9}
+		{53161DDC-2FAC-43D2-B929-2DF687D160F2} = {F85BC89A-2A8D-4D60-B502-37C5563F2D1A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2DBB3767-78D2-445D-B085-CC30D2F18AA4}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Back-end\Shared\EarlyBound\EarlyBound.projitems*{53161ddc-2fac-43d2-b929-2df687d160f2}*SharedItemsImports = 13
+		Back-end\Shared\EarlyBound\EarlyBound.projitems*{eadee1d4-3703-412b-8f31-433ed7376aae}*SharedItemsImports = 4
+	EndGlobalSection
+EndGlobal

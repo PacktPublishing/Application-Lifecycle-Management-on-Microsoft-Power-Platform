@@ -1,0 +1,29 @@
+name: Build Solution
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Pack Solution
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: '${{runner.temp}}/packed/DemoSolution_Managed.zip'
+          solution-folder: 'PowerPlatform/Solutions/DemoSolution'
+          solution-type: 'Managed'
+          overwrite-files: true
+          map-file: 'PowerPlatform/Solutions/Mappings/DemoSolution.xml'
+
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: '${{runner.temp}}/packed/**'
+          overwrite: true

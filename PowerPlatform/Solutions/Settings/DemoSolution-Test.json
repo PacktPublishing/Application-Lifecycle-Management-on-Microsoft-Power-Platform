@@ -1,0 +1,21 @@
+{
+  "EnvironmentVariables": [
+    {
+      "SchemaName": "bebe_DemoEnvVar",
+      "Value": "",
+      "Name": {
+        "Default": "Demo EnvVar",
+        "ByLcid": {
+          "1033": "Demo EnvVar"
+        }
+      }
+    }
+  ],
+  "ConnectionReferences": [
+    {
+      "LogicalName": "bebe_DemoDataverse",
+      "ConnectionId": "",
+      "ConnectorId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+    }
+  ]
+}
