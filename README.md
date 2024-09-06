@@ -1,4 +1,4 @@
-# Application Lifecycle Management in Power Platform
+# Application Lifecycle Management on Microsoft Power Platform
 Repository for the Application Lifecycle Management in Power Platform book.
 
 ## Prerequisites
