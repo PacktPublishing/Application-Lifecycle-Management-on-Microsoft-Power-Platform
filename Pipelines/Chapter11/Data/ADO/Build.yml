@@ -10,17 +10,17 @@ steps:
 
 - task: PowerPlatformPackSolution@2
   inputs:
-    SolutionSourceFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\DemoSolution'
+    SolutionSourceFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\<Solution Schemaname>'
     SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution_managed.zip'
     SolutionType: 'Managed'
-    MapFile: '$(build.sourcesdirectory)\PowerPlatform\Solutions\Mappings\DemoSolution.xml'
+    MapFile: '$(build.sourcesdirectory)\PowerPlatform\Solutions\Mappings\<Solution Schemaname>.xml'
 - task: PowerPlatformExportData@2
   inputs:
     authenticationType: 'PowerPlatformSPN'
     PowerPlatformSPN: 'DEV'
     Environment: '$(BuildTools.EnvironmentUrl)'
-    SchemaFile: '$(build.sourcesdirectory)\PowerPlatform\Data\Schema\DemoSolution.xml'
-    DataFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution-data.zip'
+    SchemaFile: '$(build.sourcesdirectory)\PowerPlatform\Data\Schema\<Solution Schemaname>.xml'
+    DataFile: '$(Build.ArtifactStagingDirectory)\\<Solution Schemaname>-data.zip'
     Overwrite: true
 - task: PublishPipelineArtifact@1
   displayName: Publish Artifacts
