@@ -20,7 +20,7 @@ steps:
     authenticationType: 'PowerPlatformSPN'
     PowerPlatformSPN: 'DEV'
     SolutionName: 'DemoSolution'
-    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution.zip'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\<Solution Schemaname>.zip'
     AsyncOperation: true
     MaxAsyncWaitTime: '60'
 - task: PowerPlatformExportSolution@2
@@ -29,15 +29,15 @@ steps:
     authenticationType: 'PowerPlatformSPN'
     PowerPlatformSPN: 'DEV'
     SolutionName: 'DemoSolution'
-    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution_managed.zip'
+    SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\\<Solution Schemaname>_managed.zip'
     Managed: true
     AsyncOperation: true
     MaxAsyncWaitTime: '60'
 - task: PowerPlatformUnpackSolution@2
   displayName: Unpack unmanaged Solution
   inputs:
-    SolutionInputFile: '$(Build.ArtifactStagingDirectory)\\DemoSolution.zip'
-    SolutionTargetFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\DemoSolution'
+    SolutionInputFile: '$(Build.ArtifactStagingDirectory)\\<Solution Schemaname>.zip'
+    SolutionTargetFolder: '$(build.sourcesdirectory)\PowerPlatform\Solutions\<Solution Schemaname>'
     SolutionType: 'Both'
 - task: CmdLine@2
   displayName: Commit to Repo
@@ -46,8 +46,8 @@ steps:
       git config user.email $(Build.RequestedForEmail) 
       git config user.name "$(Build.RequestedFor)"
       git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" fetch
-      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" checkout main
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" checkout $(Build.SourceBranchName)
       git add --all
       git commit -m "$(Build.DefinitionName) $(Build.BuildNumber)"
-      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" pull origin main
-      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin main
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" pull origin $(Build.SourceBranchName)
+      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin $(Build.SourceBranchName)
